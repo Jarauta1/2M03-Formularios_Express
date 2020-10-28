@@ -12,6 +12,10 @@ app.get("/", function (req,res) {
         <h1>${animales[i].nombre}</h1>
         <p>Edad: ${animales[i].edad}</p>
         <p>Tipo: ${animales[i].tipo}</p>
+        <form action="/adoptar">
+        <input type="hidden" value="${animales[i].nombre}" name="nombreAdoptar"/>
+        <button type="submit">Adoptar</button>
+        </form>
         `
     }
    res.send(mensaje);
@@ -19,13 +23,24 @@ app.get("/", function (req,res) {
 
 app.get("/sumar-animal", function (req,res) {
     let nombre = req.query.nombre;
-    console.log(nombre)
     let edad = req.query.edad;
-    console.log(edad)
     let tipo = req.query.tipo;
-    console.log(tipo)
     animales.push({nombre: nombre, edad: edad, tipo: tipo})
-    res.send(animales)
+    res.send(`Has añadido a ${nombre}`)
+})
+
+app.get("/adoptar", function (req,res) {
+    let nombreAdoptar = req.query.nombreAdoptar;
+    let boolean = false
+    for (let i = 0; i < animales.length; i++) {
+        if (nombreAdoptar == animales[i].nombre) {
+            boolean = true;
+            animales.splice(i,1)
+        }
+    }
+
+    boolean ? res.send(`Has adoptado a ${nombreAdoptar}`) : res.send(`No tenemos ningun animal que se llame ${nombreAdoptar}`)
+
 })
 
 app.listen(3000);
